@@ -3,17 +3,12 @@ import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import z from 'zod';
-import { conversationRepository } from './repositories/conversation.repository';
+import { chatService } from './services/chat.service';
 
 // This function from the dotenv library goes into our .env file and loads each one as an environment variable for us automatically
 // Without the dotenv library, we would have to create our env vars manually on the command line before running our server every single time
 // Needs to be the first line in your module so the env vars are loaded before anything else happens!
 dotenv.config();
-
-// Create a new instance of OpenAI with our API Key
-const client = new OpenAI({
-   apiKey: process.env.OPENAI_API_KEY,
-});
 
 // This is what we will use to build our API endpoints and handle requests and responses
 const app = express();
@@ -50,18 +45,9 @@ app.post('/api/chat', async (req: Request, res: Response) => {
 
    try {
       const { prompt, conversationId } = req.body;
-      const response = await client.responses.create({
-         model: 'gpt-4o-mini',
-         input: prompt,
-         temperature: 0.2,
-         max_output_tokens: 100,
-         previous_response_id:
-            conversationRepository.getLastResponseId(conversationId),
-      });
+      const response = await chatService.sendMessage(prompt, conversationId);
 
-      conversationRepository.setLastResponseId(conversationId, response.id);
-
-      res.json({ message: response.output_text });
+      res.json({ message: response.message });
    } catch (error) {
       res.status(500).json({ error: 'Failed to generate a response.' });
    }
