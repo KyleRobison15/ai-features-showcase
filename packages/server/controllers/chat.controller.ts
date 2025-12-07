@@ -2,6 +2,8 @@ import type { Request, Response } from 'express';
 import { chatService } from '../services/chat.service';
 import z from 'zod';
 
+// The "Single Responsibility" of a CONTROLLER -> Act as the Gateway to our application (routing/validation of requests to our API)
+
 const chatSchema = z.object({
    prompt: z
       .string()

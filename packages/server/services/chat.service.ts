@@ -1,6 +1,8 @@
 import OpenAI from 'openai';
 import { conversationRepository } from '../repositories/conversation.repository';
 
+// The "Single Responsibility" of a SERVICE -> Handle Application Logic
+
 // Create a new instance of OpenAI with our API Key
 // This is IMPLEMENTATION DETAIL (Here we are using the OpenAI LLM)
 const client = new OpenAI({
