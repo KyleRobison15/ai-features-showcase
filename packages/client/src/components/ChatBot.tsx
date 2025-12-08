@@ -1,6 +1,7 @@
-import { useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaArrowUp } from 'react-icons/fa';
+import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 import { Button } from './ui/button';
 
@@ -19,8 +20,14 @@ type Message = {
 
 const ChatBot = () => {
    const [messages, setMessages] = useState<Message[]>([]);
+   const [isBotTyping, setIsBotTyping] = useState(false);
    const conversationId = useRef(crypto.randomUUID());
+   const formRef = useRef<HTMLFormElement | null>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
+
+   useEffect(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth' });
+   }, [messages]);
 
    const onSubmit = async ({ prompt }: FormData) => {
       setMessages((prev) => [
@@ -30,6 +37,7 @@ const ChatBot = () => {
             role: 'user',
          },
       ]);
+      setIsBotTyping(true);
 
       reset();
 
@@ -45,6 +53,7 @@ const ChatBot = () => {
             role: 'bot',
          },
       ]);
+      setIsBotTyping(false);
    };
 
    const onKeyDown = (e: KeyboardEvent<HTMLFormElement>) => {
@@ -66,13 +75,21 @@ const ChatBot = () => {
                         : 'bg-gray-100 text-black self-start'
                   }`}
                >
-                  {message.content}
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
                </p>
             ))}
+            {isBotTyping && (
+               <div className="flex gap-1 px-3 py-3 bg-gray-200 rounded-xl self-start">
+                  <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse"></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.2s]"></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-800 animate-pulse [animation-delay:0.4s]"></div>
+               </div>
+            )}
          </div>
          <form
             onSubmit={handleSubmit(onSubmit)}
             onKeyDown={onKeyDown}
+            ref={formRef}
             className="flex flex-col gap-2 items-end border-2 p-4 rounded-3xl"
          >
             <textarea
