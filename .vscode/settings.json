@@ -1,3 +1,4 @@
 {
-   "editor.formatOnSave": true
+   "editor.formatOnSave": true,
+   "prisma.prismaPath": "packages/server/node_modules/prisma"
 }
