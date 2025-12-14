@@ -5,6 +5,7 @@ import StarRating from './StarRating';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { HiSparkles } from 'react-icons/hi2';
+import { useState } from 'react';
 
 type Props = {
   productId: number;
@@ -23,7 +24,13 @@ type GetReviewsResponse = {
   reviews: Review[];
 };
 
+type SummarizeResponse = {
+  summary: string;
+};
+
 const ReviewList = ({ productId }: Props) => {
+  const [summary, setSummary] = useState('');
+
   // The useQuery hook from tanstack allows us to:
   // 1. Easily manage our state variables
   // 2. Cache results to avoid unecessary API calls
@@ -40,6 +47,13 @@ const ReviewList = ({ productId }: Props) => {
     // The queryFn property is the function that tanstack will use to retrieve the data from the backend when it needs to
     queryFn: () => fetchReviews(),
   });
+
+  const handleSummarize = async () => {
+    const { data } = await axios.post<SummarizeResponse>(
+      `/api/products/${productId}/reviews/summarize`
+    );
+    setSummary(data.summary);
+  };
 
   const fetchReviews = async () => {
     const { data } = await axios.get<GetReviewsResponse>(
@@ -70,13 +84,15 @@ const ReviewList = ({ productId }: Props) => {
     return null;
   }
 
+  const currentSummary = reviewData.summary || summary;
+
   return (
     <div>
       <div className="mb-5">
-        {reviewData?.summary ? (
-          <p>{reviewData.summary}</p>
+        {currentSummary ? (
+          <p>{currentSummary}</p>
         ) : (
-          <Button>
+          <Button onClick={handleSummarize}>
             <HiSparkles />
             Summarize
           </Button>
