@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import axios from 'axios';
-import Skeleton from 'react-loading-skeleton';
 import StarRating from './StarRating';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { HiSparkles } from 'react-icons/hi2';
 import { useState } from 'react';
+import ReviewSkeleton from './ReviewSkeleton';
 
 type Props = {
   productId: number;
@@ -30,6 +30,7 @@ type SummarizeResponse = {
 
 const ReviewList = ({ productId }: Props) => {
   const [summary, setSummary] = useState('');
+  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
 
   // The useQuery hook from tanstack allows us to:
   // 1. Easily manage our state variables
@@ -49,10 +50,14 @@ const ReviewList = ({ productId }: Props) => {
   });
 
   const handleSummarize = async () => {
+    setIsSummaryLoading(true);
+
     const { data } = await axios.post<SummarizeResponse>(
       `/api/products/${productId}/reviews/summarize`
     );
+
     setSummary(data.summary);
+    setIsSummaryLoading(false);
   };
 
   const fetchReviews = async () => {
@@ -66,11 +71,7 @@ const ReviewList = ({ productId }: Props) => {
     return (
       <div className="flex flex-col gap-5">
         {[1, 2, 3].map((p) => (
-          <div key={p}>
-            <Skeleton width={100} />
-            <Skeleton width={125} />
-            <Skeleton count={2} />
-          </div>
+          <ReviewSkeleton key={p} />
         ))}
       </div>
     );
@@ -92,10 +93,21 @@ const ReviewList = ({ productId }: Props) => {
         {currentSummary ? (
           <p>{currentSummary}</p>
         ) : (
-          <Button onClick={handleSummarize}>
-            <HiSparkles />
-            Summarize
-          </Button>
+          <div>
+            <Button
+              onClick={handleSummarize}
+              className="cursor-pointer"
+              disabled={isSummaryLoading}
+            >
+              <HiSparkles />
+              Summarize with AI
+            </Button>
+            {isSummaryLoading && (
+              <div className="py-3">
+                <ReviewSkeleton />
+              </div>
+            )}
+          </div>
         )}
       </div>
       <div className="flex flex-col gap-5">
