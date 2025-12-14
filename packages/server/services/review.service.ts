@@ -9,6 +9,15 @@ export const reviewService = {
    },
 
    async summarizeReviews(productId: number): Promise<string> {
+      const existingSummary =
+         await reviewRepository.getReviewSummary(productId);
+
+      // Only generate a new review if the old one is expired
+      // This saves us usage while still ensuring the review summary does not get too outdated
+      if (existingSummary && existingSummary.expiresAt > new Date()) {
+         return existingSummary.content;
+      }
+
       const reviews = await reviewRepository.getReviewsByProductId(
          productId,
          10
@@ -17,13 +26,15 @@ export const reviewService = {
       const joinedReviews = reviews.map((r) => r.content).join('\n\n');
       const prompt = template.replace('{{reviews}}', joinedReviews);
 
-      const response = await llmClient.generateText({
+      const { text: summary } = await llmClient.generateText({
          model: 'gpt-4o-mini',
          prompt,
          temperature: 0.2,
          maxTokens: 350,
       });
 
-      return response.text;
+      await reviewRepository.saveReviewSummary(productId, summary);
+
+      return summary;
    },
 };
