@@ -22,6 +22,7 @@ export const reviewService = {
          productId,
          10
       );
+
       // Map each review object to just the content and join them all into one big string each separated by two line breaks
       const joinedReviews = reviews.map((r) => r.content).join('\n\n');
       const prompt = template.replace('{{reviews}}', joinedReviews);
