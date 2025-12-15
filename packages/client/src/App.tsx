@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import ChatBot from './components/chat/ChatBot';
 import ReviewList from './components/reviews/ReviewList';
 import NavBar from './components/navigation/NavBar';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 const Layout = () => {
   return (
@@ -17,15 +18,17 @@ const Layout = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="chatbot" element={<ChatBot />} />
-          <Route path="reviews" element={<ReviewList productId={1} />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="chatbot" element={<ChatBot />} />
+            <Route path="reviews" element={<ReviewList productId={1} />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

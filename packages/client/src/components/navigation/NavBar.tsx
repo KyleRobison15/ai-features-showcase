@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '../ui/button';
+import ThemeToggle from '../theme/ThemeToggle';
 
 const NavBar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,7 +27,7 @@ const NavBar = () => {
           </NavLink>
 
           {/* Desktop Navigation - Hidden on mobile */}
-          <div className="hidden md:flex gap-3">
+          <div className="hidden md:flex gap-3 items-center">
             <NavLink to="/">
               {({ isActive }) => (
                 <Button variant={isActive ? 'default' : 'outline'}>Home</Button>
@@ -46,6 +47,9 @@ const NavBar = () => {
                 </Button>
               )}
             </NavLink>
+            <div className="ml-2 pl-2 border-l border-border">
+              <ThemeToggle />
+            </div>
           </div>
 
           {/* Mobile Hamburger Button - Hidden on desktop */}
@@ -111,6 +115,9 @@ const NavBar = () => {
                 </Button>
               )}
             </NavLink>
+            <div className="pt-2 mt-2 border-t border-border flex justify-center">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </div>
