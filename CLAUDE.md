@@ -20,7 +20,7 @@ This is a full-stack AI-powered chatbot application built as a customer support 
 This project uses a **monorepo architecture** with Bun workspaces:
 
 ```
-ai-chatbot-app/
+ai-features-showcase/
 ├── packages/
 │   ├── client/          # React frontend application
 │   └── server/          # Express backend API
@@ -293,7 +293,7 @@ PORT=3000  # Optional, defaults to 3000
 
 1. **Clone and install dependencies:**
    ```bash
-   cd /path/to/ai-chatbot-app
+   cd /path/to/ai-features-showcase
    bun install
    ```
 

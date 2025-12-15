@@ -1,4 +1,4 @@
-# ai-chatbot-app
+# ai-features-showcase
 
 To install dependencies:
 

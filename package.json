@@ -1,5 +1,5 @@
 {
-  "name": "ai-chatbot-app",
+  "name": "ai-features-showcase",
   "module": "index.ts",
   "type": "module",
   "private": true,
