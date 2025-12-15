@@ -28,14 +28,8 @@ type SummarizeResponse = {
 };
 
 const ReviewList = ({ productId }: Props) => {
-  // The useMutation hook from tanstack is for CREATING/UPDATING data and allows us to:
-
-  const {
-    mutate: handleSummarize,
-    isPending: isSummaryLoading,
-    isError: isSummaryError,
-    data: summarizeResponse,
-  } = useMutation<SummarizeResponse>({
+  // The useMutation hook from tanstack is for CREATING/UPDATING data and allows us to
+  const summaryMutation = useMutation<SummarizeResponse>({
     // The mutationFn property is the function that tanstack will use to mutate/update data
     mutationFn: () => summarizeReviews(),
   });
@@ -44,11 +38,7 @@ const ReviewList = ({ productId }: Props) => {
   // 1. Easily manage our state variables
   // 2. Cache results to avoid unecessary API calls
   // 3. Automatically handle retries when there is an error calling the API
-  const {
-    data: reviewData,
-    error,
-    isLoading,
-  } = useQuery<GetReviewsResponse>({
+  const reviewsQuery = useQuery<GetReviewsResponse>({
     // The queryKey property is what tanstack uses to lookup data in its built in cache
     // With this setup, the unique combo of reviews and productId will be used for looking up data in the cache
     queryKey: ['reviews', productId],
@@ -71,7 +61,7 @@ const ReviewList = ({ productId }: Props) => {
     return data;
   };
 
-  if (isLoading) {
+  if (reviewsQuery.isLoading) {
     return (
       <div className="flex flex-col gap-5">
         {[1, 2, 3].map((p) => (
@@ -81,15 +71,16 @@ const ReviewList = ({ productId }: Props) => {
     );
   }
 
-  if (error) {
+  if (reviewsQuery.isError) {
     return <p className="text-red-500">Could not fetch reviews. Try again.</p>;
   }
 
-  if (!reviewData?.reviews.length) {
+  if (!reviewsQuery.data?.reviews.length) {
     return null;
   }
 
-  const currentSummary = reviewData.summary || summarizeResponse?.summary;
+  const currentSummary =
+    reviewsQuery.data.summary || summaryMutation.data?.summary;
 
   return (
     <div>
@@ -99,19 +90,19 @@ const ReviewList = ({ productId }: Props) => {
         ) : (
           <div>
             <Button
-              onClick={() => handleSummarize()}
+              onClick={() => summaryMutation.mutate()}
               className="cursor-pointer"
-              disabled={isSummaryLoading}
+              disabled={summaryMutation.isPending}
             >
               <HiSparkles />
               Summarize with AI
             </Button>
-            {isSummaryLoading && (
+            {summaryMutation.isPending && (
               <div className="py-3">
                 <ReviewSkeleton />
               </div>
             )}
-            {isSummaryError && (
+            {summaryMutation.isError && (
               <p className="text-red-500">
                 {'Could not summarize the reviews. Try again.'}
               </p>
@@ -120,7 +111,7 @@ const ReviewList = ({ productId }: Props) => {
         )}
       </div>
       <div className="flex flex-col gap-5">
-        {reviewData?.reviews.map((review) => (
+        {reviewsQuery.data?.reviews.map((review) => (
           <div key={review.id}>
             <div className="font-semibold">{review.author}</div>
             <div>
