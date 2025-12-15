@@ -9,8 +9,10 @@ const Layout = () => {
   return (
     <div className="h-screen w-full flex flex-col">
       <NavBar />
-      <main className="flex-1 px-4 py-10 overflow-hidden">
-        <Outlet />
+      <main className="flex-1 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 h-full">
+          <Outlet />
+        </div>
       </main>
     </div>
   );
