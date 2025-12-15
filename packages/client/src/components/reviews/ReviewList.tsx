@@ -1,37 +1,24 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import axios from 'axios';
 import StarRating from './StarRating';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { HiSparkles } from 'react-icons/hi2';
 import ReviewSkeleton from './ReviewSkeleton';
+import {
+  type SummarizeResponse,
+  type GetReviewsResponse,
+  reviewsApi,
+} from './reviewsApi';
 
 type Props = {
   productId: number;
-};
-
-type Review = {
-  id: number;
-  author: string;
-  content: string;
-  rating: number;
-  createdAt: string;
-};
-
-type GetReviewsResponse = {
-  summary: string | null;
-  reviews: Review[];
-};
-
-type SummarizeResponse = {
-  summary: string;
 };
 
 const ReviewList = ({ productId }: Props) => {
   // The useMutation hook from tanstack is for CREATING/UPDATING data and allows us to
   const summaryMutation = useMutation<SummarizeResponse>({
     // The mutationFn property is the function that tanstack will use to mutate/update data
-    mutationFn: () => summarizeReviews(),
+    mutationFn: () => reviewsApi.summarizeReviews(productId),
   });
 
   // The useQuery hook from tanstack is for GETTING data and allows us to:
@@ -44,22 +31,8 @@ const ReviewList = ({ productId }: Props) => {
     queryKey: ['reviews', productId],
 
     // The queryFn property is the function that tanstack will use to retrieve the data from the backend when it needs to
-    queryFn: () => fetchReviews(),
+    queryFn: () => reviewsApi.fetchReviews(productId),
   });
-
-  const summarizeReviews = async () => {
-    const { data } = await axios.post<SummarizeResponse>(
-      `/api/products/${productId}/reviews/summarize`
-    );
-    return data;
-  };
-
-  const fetchReviews = async () => {
-    const { data } = await axios.get<GetReviewsResponse>(
-      `/api/products/${productId}/reviews`
-    );
-    return data;
-  };
 
   if (reviewsQuery.isLoading) {
     return (
