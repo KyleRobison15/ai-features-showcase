@@ -1,16 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import OpenAI from 'openai';
 import { conversationRepository } from '../repositories/conversation.repository';
 import template from '../prompts/chatbot.txt';
+import { llmClient } from '../llm/client';
 
 // The "Single Responsibility" of a SERVICE -> Handle Application Logic
-
-// Create a new instance of OpenAI with our API Key
-// This is IMPLEMENTATION DETAIL (Here we are using the OpenAI LLM)
-const client = new OpenAI({
-   apiKey: process.env.OPENAI_API_KEY,
-});
 
 // Syncronously (no promise) read our MD file into a variable
 // Replace the placeholder in our template with the information we read in from our MD file
@@ -36,13 +30,13 @@ export const chatService = {
       prompt: string,
       conversationId: string
    ): Promise<ChatResponse> {
-      const response = await client.responses.create({
+      const response = await llmClient.generateText({
          model: 'gpt-4o-mini',
          instructions,
-         input: prompt,
+         prompt,
          temperature: 0.2,
-         max_output_tokens: 200,
-         previous_response_id:
+         maxTokens: 200,
+         previousResponseId:
             conversationRepository.getLastResponseId(conversationId),
       });
 
@@ -51,7 +45,7 @@ export const chatService = {
       // Instead of returning the OpenAI specific response, we return our platform agnostic response
       return {
          id: response.id,
-         message: response.output_text,
+         message: response.text,
       };
    },
 };
