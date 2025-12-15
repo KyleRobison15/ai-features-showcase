@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import axios from 'axios';
 import StarRating from './StarRating';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { HiSparkles } from 'react-icons/hi2';
-import { useState } from 'react';
 import ReviewSkeleton from './ReviewSkeleton';
 
 type Props = {
@@ -29,11 +28,19 @@ type SummarizeResponse = {
 };
 
 const ReviewList = ({ productId }: Props) => {
-  const [summary, setSummary] = useState('');
-  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
-  const [summaryError, setSummaryError] = useState('');
+  // The useMutation hook from tanstack is for CREATING/UPDATING data and allows us to:
 
-  // The useQuery hook from tanstack allows us to:
+  const {
+    mutate: handleSummarize,
+    isPending: isSummaryLoading,
+    isError: isSummaryError,
+    data: summarizeResponse,
+  } = useMutation<SummarizeResponse>({
+    // The mutationFn property is the function that tanstack will use to mutate/update data
+    mutationFn: () => summarizeReviews(),
+  });
+
+  // The useQuery hook from tanstack is for GETTING data and allows us to:
   // 1. Easily manage our state variables
   // 2. Cache results to avoid unecessary API calls
   // 3. Automatically handle retries when there is an error calling the API
@@ -50,22 +57,11 @@ const ReviewList = ({ productId }: Props) => {
     queryFn: () => fetchReviews(),
   });
 
-  const handleSummarize = async () => {
-    try {
-      setIsSummaryLoading(true);
-      setSummaryError('');
-
-      const { data } = await axios.post<SummarizeResponse>(
-        `/api/products/${productId}/reviews/summarize`
-      );
-
-      setSummary(data.summary);
-    } catch (error) {
-      console.error(error); // Use a logging utility in real world app (like Sentry)
-      setSummaryError('Could not summarize the reviews. Try again.');
-    } finally {
-      setIsSummaryLoading(false);
-    }
+  const summarizeReviews = async () => {
+    const { data } = await axios.post<SummarizeResponse>(
+      `/api/products/${productId}/reviews/summarize`
+    );
+    return data;
   };
 
   const fetchReviews = async () => {
@@ -93,7 +89,7 @@ const ReviewList = ({ productId }: Props) => {
     return null;
   }
 
-  const currentSummary = reviewData.summary || summary;
+  const currentSummary = reviewData.summary || summarizeResponse?.summary;
 
   return (
     <div>
@@ -103,7 +99,7 @@ const ReviewList = ({ productId }: Props) => {
         ) : (
           <div>
             <Button
-              onClick={handleSummarize}
+              onClick={() => handleSummarize()}
               className="cursor-pointer"
               disabled={isSummaryLoading}
             >
@@ -115,7 +111,11 @@ const ReviewList = ({ productId }: Props) => {
                 <ReviewSkeleton />
               </div>
             )}
-            {summaryError && <p className="text-red-500">{summaryError}</p>}
+            {isSummaryError && (
+              <p className="text-red-500">
+                {'Could not summarize the reviews. Try again.'}
+              </p>
+            )}
           </div>
         )}
       </div>
