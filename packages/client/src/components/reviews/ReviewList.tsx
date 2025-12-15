@@ -31,6 +31,7 @@ type SummarizeResponse = {
 const ReviewList = ({ productId }: Props) => {
   const [summary, setSummary] = useState('');
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState('');
 
   // The useQuery hook from tanstack allows us to:
   // 1. Easily manage our state variables
@@ -50,14 +51,21 @@ const ReviewList = ({ productId }: Props) => {
   });
 
   const handleSummarize = async () => {
-    setIsSummaryLoading(true);
+    try {
+      setIsSummaryLoading(true);
+      setSummaryError('');
 
-    const { data } = await axios.post<SummarizeResponse>(
-      `/api/products/${productId}/reviews/summarize`
-    );
+      const { data } = await axios.post<SummarizeResponse>(
+        `/api/products/${productId}/reviews/summarize`
+      );
 
-    setSummary(data.summary);
-    setIsSummaryLoading(false);
+      setSummary(data.summary);
+    } catch (error) {
+      console.error(error); // Use a logging utility in real world app (like Sentry)
+      setSummaryError('Could not summarize the reviews. Try again.');
+    } finally {
+      setIsSummaryLoading(false);
+    }
   };
 
   const fetchReviews = async () => {
@@ -107,6 +115,7 @@ const ReviewList = ({ productId }: Props) => {
                 <ReviewSkeleton />
               </div>
             )}
+            {summaryError && <p className="text-red-500">{summaryError}</p>}
           </div>
         )}
       </div>
