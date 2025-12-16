@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import axios from 'axios';
+import { api } from '@/lib/api';
 import TypingIndicator from './TypingIndicator';
 import type { Message } from './ChatMessages';
 import ChatMessages from './ChatMessages';
@@ -37,7 +37,7 @@ const ChatBot = () => {
       setError('');
       popAudio.play();
 
-      const { data } = await axios.post<ChatResponse>('/api/chat', {
+      const { data } = await api.post<ChatResponse>('/api/chat', {
         prompt,
         conversationId: conversationId.current,
       });

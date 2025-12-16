@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { api } from '@/lib/api';
 
 export type Review = {
   id: number;
@@ -27,18 +27,18 @@ export type SummarizeResponse = {
 
 export const reviewsApi = {
   fetchReviews(productId: number) {
-    return axios
+    return api
       .get<GetReviewsResponse>(`/api/products/${productId}/reviews`)
       .then((res) => res.data);
   },
 
   summarizeReviews(productId: number) {
-    return axios
+    return api
       .post<SummarizeResponse>(`/api/products/${productId}/reviews/summarize`)
       .then((res) => res.data);
   },
 
   fetchProducts() {
-    return axios.get<Product[]>('/api/products').then((res) => res.data);
+    return api.get<Product[]>('/api/products').then((res) => res.data);
   },
 };
