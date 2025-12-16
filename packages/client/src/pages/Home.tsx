@@ -21,7 +21,7 @@ const Home = () => {
               store hours.
             </p>
             <Link to="/chatbot">
-              <Button className="w-full">Try Chatbot</Button>
+              <Button className="w-full cursor-pointer">Try Chatbot</Button>
             </Link>
           </div>
 
@@ -33,7 +33,9 @@ const Home = () => {
               review.
             </p>
             <Link to="/reviews">
-              <Button className="w-full">Try Review Summarizer</Button>
+              <Button className="w-full cursor-pointer">
+                Try Review Summarizer
+              </Button>
             </Link>
           </div>
         </div>

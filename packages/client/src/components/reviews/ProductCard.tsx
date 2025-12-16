@@ -1,5 +1,5 @@
 import type { Product } from './reviewsApi';
-import { HiShoppingBag } from 'react-icons/hi2';
+import { GrBike } from 'react-icons/gr';
 
 type Props = {
   product: Product;
@@ -20,8 +20,8 @@ const ProductCard = ({ product, isSelected, onClick }: Props) => {
       }`}
     >
       {/* Image placeholder */}
-      <div className="h-48 bg-linear-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 flex items-center justify-center">
-        <HiShoppingBag className="w-16 h-16 text-blue-400 dark:text-blue-600" />
+      <div className="h-32 bg-linear-to-br from-blue-100 to-blue-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center">
+        <GrBike className="w-12 h-12 text-blue-400 dark:text-slate-300" />
       </div>
 
       {/* Content */}
