@@ -8,6 +8,13 @@ export type Review = {
   createdAt: string;
 };
 
+export type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+};
+
 export type GetReviewsResponse = {
   summary: string | null;
   reviews: Review[];
@@ -28,5 +35,9 @@ export const reviewsApi = {
     return axios
       .post<SummarizeResponse>(`/api/products/${productId}/reviews/summarize`)
       .then((res) => res.data);
+  },
+
+  fetchProducts() {
+    return axios.get<Product[]>('/api/products').then((res) => res.data);
   },
 };

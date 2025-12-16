@@ -8,13 +8,20 @@ import {
   type SummarizeResponse,
   type GetReviewsResponse,
   reviewsApi,
+  type Product,
 } from './reviewsApi';
+import ProductCard from './ProductCard';
 
 type Props = {
   productId: number;
 };
 
 const ReviewList = ({ productId }: Props) => {
+  const productsQuery = useQuery<Product[]>({
+    queryKey: ['products'],
+    queryFn: () => reviewsApi.fetchProducts(),
+  });
+
   // The useMutation hook from tanstack is for CREATING/UPDATING data and allows us to
   const summaryMutation = useMutation<SummarizeResponse>({
     // The mutationFn property is the function that tanstack will use to mutate/update data
@@ -57,7 +64,19 @@ const ReviewList = ({ productId }: Props) => {
 
   return (
     <div>
-      <div className="mb-5">Products</div>
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+          Our Products
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {productsQuery.data?.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </div>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+        Customer Reviews
+      </h2>
       <div className="mb-5">
         {currentSummary ? (
           <p>{currentSummary}</p>
