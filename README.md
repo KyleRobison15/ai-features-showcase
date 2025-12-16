@@ -30,9 +30,31 @@ After spending some time learning the fundamentals of LLMs, prompt engineering, 
 
 **Conversation Context Management:**
 - Client generates unique `conversationId` per session using `crypto.randomUUID()`
-- Server tracks `conversationId → lastResponseId` mapping
+- Server tracks `conversationId → lastResponseId` mapping using an in-memory Map
 - Each request includes `previous_response_id` to maintain context
 - OpenAI automatically manages conversation history
+
+**Implementation Note:**
+For this learning project, conversation state is stored in an in-memory `Map<string, string>` rather than persisting to MySQL.
+
+If this were a production app requiring features like conversation history or cross-session persistence, migrating to MySQL would be straightforward:
+```typescript
+// Current: In-memory Map
+export const conversationRepository = {
+  getLastResponseId(conversationId: string) {
+    return conversations.get(conversationId);
+  },
+};
+
+// Future: MySQL (same interface, different implementation)
+export const conversationRepository = {
+  async getLastResponseId(conversationId: string) {
+    return prisma.conversation.findUnique({
+      where: { id: conversationId }
+    })?.lastResponseId;
+  },
+};
+```
 
 **Prompt Engineering:**
 ```typescript
