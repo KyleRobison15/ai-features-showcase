@@ -15,6 +15,7 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
+      className="cursor-pointer"
       aria-label={
         resolvedTheme === 'light'
           ? 'Switch to dark mode'

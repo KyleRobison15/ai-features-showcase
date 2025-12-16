@@ -20,7 +20,7 @@ const NavBar = () => {
         <div className="flex justify-between items-center h-16">
           <NavLink
             to="/"
-            className="text-xl font-bold"
+            className="text-xl font-bold cursor-pointer"
             onClick={closeMobileMenu}
           >
             AI Showcase
@@ -30,19 +30,30 @@ const NavBar = () => {
           <div className="hidden md:flex gap-3 items-center">
             <NavLink to="/">
               {({ isActive }) => (
-                <Button variant={isActive ? 'default' : 'outline'}>Home</Button>
+                <Button
+                  variant={isActive ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                >
+                  Home
+                </Button>
               )}
             </NavLink>
             <NavLink to="/chatbot">
               {({ isActive }) => (
-                <Button variant={isActive ? 'default' : 'outline'}>
+                <Button
+                  variant={isActive ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                >
                   AI Chatbot
                 </Button>
               )}
             </NavLink>
             <NavLink to="/reviews">
               {({ isActive }) => (
-                <Button variant={isActive ? 'default' : 'outline'}>
+                <Button
+                  variant={isActive ? 'default' : 'outline'}
+                  className="cursor-pointer"
+                >
                   Review Summarizer
                 </Button>
               )}
@@ -89,7 +100,7 @@ const NavBar = () => {
               {({ isActive }) => (
                 <Button
                   variant={isActive ? 'default' : 'outline'}
-                  className="w-full"
+                  className="w-full cursor-pointer"
                 >
                   Home
                 </Button>
@@ -99,7 +110,7 @@ const NavBar = () => {
               {({ isActive }) => (
                 <Button
                   variant={isActive ? 'default' : 'outline'}
-                  className="w-full"
+                  className="w-full cursor-pointer"
                 >
                   AI Chatbot
                 </Button>
@@ -109,7 +120,7 @@ const NavBar = () => {
               {({ isActive }) => (
                 <Button
                   variant={isActive ? 'default' : 'outline'}
-                  className="w-full"
+                  className="w-full cursor-pointer"
                 >
                   Review Summarizer
                 </Button>
