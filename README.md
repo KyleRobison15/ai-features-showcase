@@ -2,7 +2,7 @@
 ## Project Overview
 It's clear that going forward, every software engineer will be expected to know how to work with AI models, just like other core competencies we're expected to know like working with databases. 
 
-To kickstart my AI engineering learning journey, I took the "Build AI-Powered Apps" course from www.codewithmosh.com and built this AI Features Showcase project. I dedicated over 40 hours to learn these concepts and put them into practice by developing this full stack, AI powered web application from the ground up - no vibe coding involved whatsover. Some of the concepts covered in this course:
+To kickstart my AI engineering learning journey, I took the "Build AI-Powered Apps" course from www.codewithmosh.com and built this AI Features Showcase project. I dedicated over 40 hours to learn these concepts and put them into practice by developing this full stack, AI powered web application from the ground up - no vibe coding involved whatsover. Some of the concepts covered in this project:
 
 - Fundamentals of large language models (LLMs)
 - Prompt engineering
@@ -128,7 +128,7 @@ await reviewRepository.saveReviewSummary(productId, summary);
 
 ### Runtime & Build Tools
 - **Bun** - Modern JavaScript runtime and package manager (faster than Node.js/npm)
-- **TypeScript 5.x** - Type-safe JavaScript for both client and server
+- **TypeScript** - Type-safe JavaScript for both client and server
 - **Vite** - Next-generation frontend build tool with lightning-fast HMR
 - **Concurrently** - Run client and server in parallel during development
 
@@ -145,7 +145,7 @@ await reviewRepository.saveReviewSummary(productId, summary);
 - **React 19** - Latest version of React with modern hooks and patterns
 - **React Router DOM** - Declarative routing for single-page applications
 - **TanStack Query** (React Query) - Powerful async state management for server data
-- **Tailwind CSS 4.x** - Utility-first CSS framework for rapid UI development
+- **Tailwind CSS** - Utility-first CSS framework for rapid UI development
 - **shadcn/ui** - Third party component library for rapid UI development
 - **React Hook Form** - Form validation
 - **React Markdown** - Render markdown content in React components
