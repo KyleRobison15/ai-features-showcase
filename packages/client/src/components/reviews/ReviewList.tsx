@@ -18,6 +18,7 @@ type Props = {
 
 const ReviewList = ({ productId }: Props) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const reviewsSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,13 +35,6 @@ const ReviewList = ({ productId }: Props) => {
     queryFn: () => reviewsApi.fetchProducts(),
   });
 
-  // The useMutation hook from tanstack is for CREATING/UPDATING data and allows us to
-  const summaryMutation = useMutation<SummarizeResponse>({
-    // The mutationFn property is the function that tanstack will use to mutate/update data
-    mutationFn: () =>
-      reviewsApi.summarizeReviews(selectedProduct?.id || productId),
-  });
-
   // The useQuery hook from tanstack is for GETTING data and allows us to:
   // 1. Easily manage our state variables
   // 2. Cache results to avoid unecessary API calls
@@ -55,8 +49,63 @@ const ReviewList = ({ productId }: Props) => {
     enabled: !!selectedProduct,
   });
 
+  // The useMutation hook from tanstack is for CREATING/UPDATING data and allows us to
+  const summaryMutation = useMutation<SummarizeResponse>({
+    // The mutationFn property is the function that tanstack will use to mutate/update data
+    mutationFn: () =>
+      reviewsApi.summarizeReviews(selectedProduct?.id || productId),
+    // After successfully creating the summary, refetch reviews to get the expiration time
+    onSuccess: () => {
+      reviewsQuery.refetch();
+    },
+  });
+
+  // Use the query data if available (it's the source of truth for expired summaries)
+  // Only fall back to mutation data if we haven't received query data yet
   const currentSummary =
-    reviewsQuery.data?.summary || summaryMutation.data?.summary;
+    reviewsQuery.data !== undefined
+      ? reviewsQuery.data.summary
+      : summaryMutation.data?.summary;
+
+  const summaryExpiresAt = reviewsQuery.data?.summaryExpiresAt;
+
+  // Update countdown timer and handle expiration
+  useEffect(() => {
+    if (!summaryExpiresAt || !currentSummary) {
+      setRemainingSeconds(null);
+      return;
+    }
+
+    const now = new Date().getTime();
+    const expiresAt = new Date(summaryExpiresAt).getTime();
+    const totalRemaining = expiresAt - now;
+
+    // If already expired, don't show anything
+    if (totalRemaining <= 0) {
+      setRemainingSeconds(0);
+      return;
+    }
+
+    const updateRemainingTime = () => {
+      const now = new Date().getTime();
+      const expiresAt = new Date(summaryExpiresAt).getTime();
+      const remaining = Math.max(0, Math.ceil((expiresAt - now) / 1000));
+      setRemainingSeconds(remaining);
+
+      // If countdown reaches 0, invalidate the query to clear the summary
+      if (remaining === 0) {
+        reviewsQuery.refetch();
+      }
+    };
+
+    // Update immediately
+    updateRemainingTime();
+
+    // Update every second
+    const interval = setInterval(updateRemainingTime, 1000);
+
+    return () => clearInterval(interval);
+  }, [summaryExpiresAt, currentSummary, reviewsQuery]);
 
   return (
     <div>
@@ -106,15 +155,34 @@ const ReviewList = ({ productId }: Props) => {
                           AI Summary
                         </h3>
                       </div>
-                      <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                      <p className="text-gray-800 dark:text-gray-200 leading-relaxed mb-4">
                         {currentSummary}
                       </p>
+                      {remainingSeconds !== null && (
+                        <div className="mt-4 pt-4 border-t border-purple-200 dark:border-purple-700">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm text-purple-700 dark:text-purple-300">
+                              For demonstration purposes, this summary will
+                              expire in {remainingSeconds} seconds
+                            </p>
+                          </div>
+                          {/* Progress bar */}
+                          <div className="w-full h-2 bg-purple-200 dark:bg-purple-800 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-linear-to-r from-purple-600 to-blue-600 transition-all duration-1000 ease-linear"
+                              style={{
+                                width: `${(remainingSeconds / 120) * 100}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div>
                       <Button
                         onClick={() => summaryMutation.mutate()}
-                        className="cursor-pointer bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 shadow-md px-6 py-3 text-base"
+                        className="cursor-pointer bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 shadow-md px-6 py-3 text-base"
                         disabled={summaryMutation.isPending}
                       >
                         <HiSparkles className="w-5 h-5" />

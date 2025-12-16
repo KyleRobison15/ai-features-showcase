@@ -17,6 +17,7 @@ export type Product = {
 
 export type GetReviewsResponse = {
   summary: string | null;
+  summaryExpiresAt: string | null;
   reviews: Review[];
 };
 
