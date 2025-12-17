@@ -1,26 +1,42 @@
 import express from 'express';
+import path from 'path';
 import dotenv from 'dotenv';
 import router from './routes';
 
-// This function from the dotenv library goes into our .env file and loads each one as an environment variable for us automatically
-// Without the dotenv library, we would have to create our env vars manually on the command line before running our server every single time
-// Needs to be the first line in your module so the env vars are loaded before anything else happens!
-dotenv.config();
+// Load environment variables (Railway provides them directly in production)
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 // Create our "app" in express
 const app = express();
 
-// Tells express to automatically parse JSON objects from our request body. Without this, request.body will be undefined.
-// Returns a middleware function that gets executed before passing the request to our request handler
+// Middleware
 app.use(express.json());
 
-// The router is what we will use to build our API endpoints and handle requests and responses
-// We define our router and give it our endpoints in our routes.ts file
-// Each route has a reference to a controller function
+// Health check endpoint (Railway uses this)
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// API routes
 app.use(router);
+
+// Serve React static files in production
+if (process.env.NODE_ENV === 'production') {
+  const clientDistPath = path.join(__dirname, '../../client/dist');
+
+  // Serve static files
+  app.use(express.static(clientDistPath));
+
+  // SPA fallback - send index.html for all non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+}
 
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-   console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server running on port ${port}`);
 });
