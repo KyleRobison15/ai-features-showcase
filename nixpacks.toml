@@ -5,7 +5,7 @@ nixPkgs = ["bun", "openssl"]
 cmds = ["bun install"]
 
 [phases.build]
-cmds = ["bunx prisma generate", "bun run build"]
+cmds = ["bun run build"]
 nixLibs = ["openssl"]
 
 [start]
