@@ -5,10 +5,7 @@ nixPkgs = ["bun"]
 cmds = ["bun install"]
 
 [phases.build]
-cmds = [
-  "bun run build",
-  "bun run migrate"
-]
+cmds = ["bun run build"]
 
 [start]
-cmd = "bun run start"
+cmd = "bun run migrate && bun run start"
