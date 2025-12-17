@@ -5,6 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "bun run index.ts",
+    "build": "bun run build:client && bun run build:server",
+    "build:client": "cd packages/client && bun install && bun run build",
+    "build:server": "cd packages/server && bun install && bunx prisma generate",
+    "migrate": "cd packages/server && bunx prisma migrate deploy",
+    "start": "cd packages/server && bun run start",
     "format": "prettier --write .",
     "prepare": "husky"
   },
