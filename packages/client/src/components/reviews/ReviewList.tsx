@@ -11,6 +11,7 @@ import {
   type Product,
 } from './reviewsApi';
 import ProductCard from './ProductCard';
+import ProductCardSkeleton from './ProductCardSkeleton';
 
 type Props = {
   productId: number;
@@ -114,14 +115,18 @@ const ReviewList = ({ productId }: Props) => {
           Our Products
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {productsQuery.data?.map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
-              isSelected={selectedProduct?.id === p.id}
-              onClick={() => setSelectedProduct(p)}
-            />
-          ))}
+          {productsQuery.isLoading
+            ? Array.from({ length: 4 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))
+            : productsQuery.data?.map((p) => (
+                <ProductCard
+                  key={p.id}
+                  product={p}
+                  isSelected={selectedProduct?.id === p.id}
+                  onClick={() => setSelectedProduct(p)}
+                />
+              ))}
         </div>
       </div>
 
