@@ -1,11 +1,12 @@
 [phases.setup]
-nixPkgs = ["bun"]
+nixPkgs = ["bun", "openssl"]
 
 [phases.install]
 cmds = ["bun install"]
 
 [phases.build]
-cmds = ["bun run build"]
+cmds = ["bunx prisma generate", "bun run build"]
+nixLibs = ["openssl"]
 
 [start]
 cmd = "bun run migrate && bun run start"
