@@ -6,12 +6,7 @@ import { productController } from './controllers/product.controller';
 
 const router = express.Router();
 
-// In real world projects, we shouldn't have the actual route handlers here, we should just have a reference to a function inside a controller
-router.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-});
-
-// In real world projects, we shouldn't have the actual route handlers here, we should just have a reference to a function inside a controller
+// API routes only - root path handled by React app in production
 router.get('/api/hello', (req: Request, res: Response) => {
   res.json({ message: 'Hello World!' });
 });
