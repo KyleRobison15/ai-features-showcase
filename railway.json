@@ -3,7 +3,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd packages/server && (bunx prisma migrate resolve --rolled-back 20251213164335_refine_schema || true) && (bunx prisma migrate resolve --rolled-back 20251213153442_init || true) && (bunx prisma migrate resolve --rolled-back 20251217133813_change_price_to_decimal || true) && cd ../.. && bun run migrate && bun run start",
+    "startCommand": "bun run migrate && bun run start",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 100,
     "restartPolicyType": "ON_FAILURE",
