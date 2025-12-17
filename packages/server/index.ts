@@ -24,7 +24,7 @@ app.use(router);
 
 // Serve React static files in production
 if (process.env.NODE_ENV === 'production') {
-  const clientDistPath = path.join(__dirname, '../../client/dist');
+  const clientDistPath = path.join(__dirname, '../client/dist');
 
   // Serve static files
   app.use(express.static(clientDistPath));
