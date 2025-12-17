@@ -125,7 +125,7 @@ const ReviewList = ({ productId }: Props) => {
         </div>
       </div>
 
-      <div ref={reviewsSectionRef}>
+      <div ref={reviewsSectionRef} className="pb-8">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           {selectedProduct
             ? `${selectedProduct.name} Reviews`
