@@ -32,4 +32,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Prisma generated client
+packages/server/generated
+
+# Deployment guide (local only)
 DEPLOYMENT.md

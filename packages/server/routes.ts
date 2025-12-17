@@ -1,7 +1,6 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import { chatController } from './controllers/chat.controller';
-import { PrismaClient } from './generated/prisma/client';
 import { reviewController } from './controllers/review.controller';
 import { productController } from './controllers/product.controller';
 
