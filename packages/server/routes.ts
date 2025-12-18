@@ -3,6 +3,11 @@ import type { Request, Response } from 'express';
 import { chatController } from './controllers/chat.controller';
 import { reviewController } from './controllers/review.controller';
 import { productController } from './controllers/product.controller';
+import {
+  aiRateLimiter,
+  summarizeRateLimiter,
+  apiRateLimiter,
+} from './middleware/rateLimiter';
 
 const router = express.Router();
 
@@ -11,16 +16,24 @@ router.get('/api/hello', (req: Request, res: Response) => {
   res.json({ message: 'Hello World!' });
 });
 
-// In real world projects, this is how our route should look!
-router.post('/api/chat', chatController.sendMessage);
+// AI chatbot endpoint - strict rate limit (10 requests per 15 min)
+router.post('/api/chat', aiRateLimiter, chatController.sendMessage);
 
-router.get('/api/products/:id/reviews', reviewController.getReviewsForProduct);
+// Get reviews - general rate limit (100 requests per 15 min)
+router.get(
+  '/api/products/:id/reviews',
+  apiRateLimiter,
+  reviewController.getReviewsForProduct
+);
 
+// Summarize reviews - very strict rate limit (5 requests per 15 min)
 router.post(
   '/api/products/:id/reviews/summarize',
+  summarizeRateLimiter,
   reviewController.summarizeReviews
 );
 
-router.get('/api/products', productController.getProducts);
+// Get products - general rate limit (100 requests per 15 min)
+router.get('/api/products', apiRateLimiter, productController.getProducts);
 
 export default router;

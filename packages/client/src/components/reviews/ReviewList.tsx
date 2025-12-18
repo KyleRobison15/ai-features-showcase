@@ -12,6 +12,7 @@ import {
 } from './reviewsApi';
 import ProductCard from './ProductCard';
 import ProductCardSkeleton from './ProductCardSkeleton';
+import { getErrorMessage } from '@/lib/errorUtils';
 
 type Props = {
   productId: number;
@@ -114,20 +115,24 @@ const ReviewList = ({ productId }: Props) => {
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
           Our Products
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {productsQuery.isLoading
-            ? Array.from({ length: 4 }).map((_, i) => (
-                <ProductCardSkeleton key={i} />
-              ))
-            : productsQuery.data?.map((p) => (
-                <ProductCard
-                  key={p.id}
-                  product={p}
-                  isSelected={selectedProduct?.id === p.id}
-                  onClick={() => setSelectedProduct(p)}
-                />
-              ))}
-        </div>
+        {productsQuery.isError ? (
+          <p className="text-red-500">{getErrorMessage(productsQuery.error)}</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {productsQuery.isLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))
+              : productsQuery.data?.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={p}
+                    isSelected={selectedProduct?.id === p.id}
+                    onClick={() => setSelectedProduct(p)}
+                  />
+                ))}
+          </div>
+        )}
       </div>
 
       <div ref={reviewsSectionRef} className="pb-8">
@@ -147,7 +152,7 @@ const ReviewList = ({ productId }: Props) => {
               </div>
             ) : reviewsQuery.isError ? (
               <p className="text-red-500">
-                Could not fetch reviews. Try again.
+                {getErrorMessage(reviewsQuery.error)}
               </p>
             ) : reviewsQuery.data?.reviews.length ? (
               <>
@@ -200,7 +205,7 @@ const ReviewList = ({ productId }: Props) => {
                       )}
                       {summaryMutation.isError && (
                         <p className="text-red-500">
-                          {'Could not summarize the reviews. Try again.'}
+                          {getErrorMessage(summaryMutation.error)}
                         </p>
                       )}
                     </div>

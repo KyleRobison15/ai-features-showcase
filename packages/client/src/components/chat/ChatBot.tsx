@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { api } from '@/lib/api';
+import { getErrorMessage } from '@/lib/errorUtils';
 import TypingIndicator from './TypingIndicator';
 import type { Message } from './ChatMessages';
 import ChatMessages from './ChatMessages';
@@ -52,7 +53,7 @@ const ChatBot = () => {
       notificationAudio.play();
     } catch (error) {
       console.error(error); // Use a logging utility in real world app (like Sentry)
-      setError('Something went wrong, try again.');
+      setError(getErrorMessage(error));
     } finally {
       setIsBotTyping(false);
     }
