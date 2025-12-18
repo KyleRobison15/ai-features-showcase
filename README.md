@@ -249,11 +249,23 @@ model Summary {
 }
 ```
 
-**Design Decisions:**
-- **Relational model** - Products have many Reviews; each Product has one Summary
-- **Cache expiration** - Summaries have an `expiresAt` field to prevent stale AI-generated content
-- **Type safety** - Prisma generates TypeScript types from the schema
-- **Migration system** - Schema changes are versioned and reproducible
+## Rate Limiting
+
+The application includes rate limiting on AI endpoints to control costs and prevent abuse:
+
+**Implemented Limits:**
+- **AI Chatbot:** 10 requests per 15 minutes per IP address
+- **Review Summarizer:** 5 requests per 15 minutes per IP address
+- **General API:** 100 requests per 15 minutes per IP address
+
+**Implementation:** Uses `express-rate-limit` middleware with clear, user-friendly error messages.
+
+**Rate Limit Response (HTTP 429):**
+```json
+{
+  "message": "Too many AI requests from this IP, please try again later."
+}
+```
 
 ## Deployment
 
