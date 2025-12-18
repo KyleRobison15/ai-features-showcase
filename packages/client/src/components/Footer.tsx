@@ -17,7 +17,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-3">
               <a
-                href="https://github.com/KyleRobison15"
+                href="https://github.com/KyleRobison15/ai-features-showcase?tab=readme-ov-file#ai-features-showcase"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
