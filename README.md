@@ -254,3 +254,18 @@ model Summary {
 - **Cache expiration** - Summaries have an `expiresAt` field to prevent stale AI-generated content
 - **Type safety** - Prisma generates TypeScript types from the schema
 - **Migration system** - Schema changes are versioned and reproducible
+
+## Deployment
+
+This application is deployed to **Railway** in production. For comprehensive deployment documentation, see **[DEPLOYMENT.md](./DEPLOYMENT.md)**, which includes:
+- Platform & architecture overview
+- Critical configuration files (`railway.json`, `nixpacks.toml`, Prisma binary targets)
+- Environment variables setup
+- Build & deployment process
+- Express production configuration
+- Database migration strategy
+- Health checks & auto-deploy
+- Rate limiting implementation
+- Troubleshooting common issues
+- Production best practices
+- Cost estimates
